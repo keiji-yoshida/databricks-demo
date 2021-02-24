@@ -35,7 +35,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 小分子リガンドから標的タンパク質へのインシリコ分子ドッキングを行うためのプログラム (Autodock Vina) のインストール
+# MAGIC ## 小分子リガンドから標的タンパク質へのインシリコ分子ドッキングを行うためのライブラリ (Autodock Vina) のインストール
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/autodock_vina.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
@@ -46,29 +46,29 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Install Docking Libraries
+# DBTITLE 1,ドッキングライブラリのインストール
 # MAGIC %conda install -c bioconda autodock-vina biopython
 
 # COMMAND ----------
 
-# DBTITLE 1,Install OpenBabel for PDB Management
+# DBTITLE 1,PDB 管理のための OpenBabel のインストール
 # MAGIC %conda install -c conda-forge openbabel
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Install In Silico Protein Surface Mapper (Concavity)
+# MAGIC ## インシリコタンパク質サーフェスマッパー (ConCavity) のインストール
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Concavity.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Compile C++ Code
+# MAGIC ### C++ コードのコンパイル
 
 # COMMAND ----------
 
-# DBTITLE 1,Download and Compile Concavity to do Protein Surface Probing
+# DBTITLE 1,ConCavity のダウンロードとコンパイル
 # MAGIC %sh
 # MAGIC 
 # MAGIC sudo apt install --assume-yes libglu1-mesa-dev                              ## install libgl headers
@@ -84,11 +84,11 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Distribute Libraries to Worker Nodes
+# MAGIC ### ワーカノードへのライブラリの配布
 
 # COMMAND ----------
 
-# DBTITLE 1,Install Needed GLX Concavity Library on Workers
+# DBTITLE 1,ワーカーでの GLX ConCavity ライブラリのインストール
 # MAGIC %scala
 # MAGIC 
 # MAGIC import scala.sys.process.Process
@@ -99,12 +99,12 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Distribute Concavity Binary to Worker Nodes
+# DBTITLE 1,ConCavity バイナリの配布
 # MAGIC %fs cp -r file:/tmp/concavity_distr dbfs:/tmp/concavity
 
 # COMMAND ----------
 
-# DBTITLE 1,Have Workers Download Concavity from DBFS Due to Limitations in Databricks Community Edition
+# DBTITLE 1,DBFS からワーカへ ConCavity の配布
 # MAGIC %scala
 # MAGIC 
 # MAGIC import scala.sys.process.Process
@@ -117,7 +117,7 @@
 
 # MAGIC %md 
 # MAGIC 
-# MAGIC # Load Zinc15 Small Molecule Public Repository
+# MAGIC # Zinc15 小分子公開リポジトリのロード
 # MAGIC <img src ="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/zinc15_license.png" width="500"/>
 # MAGIC 
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Zinc_3D.png" alt="drawing" width="500"/>
@@ -126,18 +126,18 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Architecture Step
+# MAGIC ## アーキテクチャ
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_ingest.png", width = "100%" /img>
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Retrieve Zinc 15 250K Data Set
+# MAGIC ## Zinc15 250K データセットの取得
 
 # COMMAND ----------
 
-# DBTITLE 1,Retrieve Zinc15 Experimental Dataset
+# DBTITLE 1,Zinc15 実験データセットの取得
 # MAGIC %sh
 # MAGIC 
 # MAGIC ## The file contains 250K smile strings
@@ -148,23 +148,23 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Copy the Zinc15 Experimental Dataset onto DBFS
+# DBTITLE 1,Zinc15 実験データセットを DBFS へコピー
 # MAGIC %fs cp file:/tmp/zinc15_250K_2D.csv dbfs:/tmp/
 
 # COMMAND ----------
 
-# DBTITLE 1,Drop Table to Begin SMILES Loading
+# DBTITLE 1,データのロード前にテーブルを削除
 # MAGIC %sql drop table if exists zinc15_deepchem;
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Load Zinc15 SMILES Into Delta
+# MAGIC ## Zinc15 SMILES を Delta Lake テーブルへロード
 
 # COMMAND ----------
 
-# DBTITLE 1,Load the ZINC15 SMILES Data into Zinc15_DeepChem Table
+# DBTITLE 1,ZINC15 SMILES データを Zinc15_DeepChem テーブルへロード
 # MAGIC %scala
 # MAGIC 
 # MAGIC import org.apache.spark.sql.types.{StructField, StructType, StringType}
@@ -194,7 +194,7 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Load the Zinc15 250K Data from Delta
+# DBTITLE 1,Delta Lake テーブルから Zinc15 250K データを取得
 # MAGIC %scala
 # MAGIC 
 # MAGIC import org.apache.spark.sql.functions.monotonically_increasing_id
@@ -213,16 +213,16 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Retrieve ZINC15 SDFs via Distributed ZINC15 API Calls and Ingest into Delta
+# MAGIC ## ZINC15 API の分散実行で ZINC15 SDF を取得し、Delta Lake テーブルへ登録
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Ligand API UDF
+# MAGIC ### リガンド API UDF
 
 # COMMAND ----------
 
-# DBTITLE 1,Scala UDF for Retrieving SDFs
+# DBTITLE 1,SDF を取得する UDF
 # MAGIC %scala
 # MAGIC 
 # MAGIC import org.apache.spark.sql.functions.{udf, col};
@@ -251,12 +251,12 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Drop Table to Begin the SDF Loading Process
+# DBTITLE 1,SDF のロード前にテーブルを削除
 # MAGIC %sql drop table if exists zinc_15_250K;
 
 # COMMAND ----------
 
-# DBTITLE 1,Batch Job with Loop to Download Zinc Data from APIs
+# DBTITLE 1,ループでバッチ処理を実行し、API 経由で Zinc データをダウンロード
 # MAGIC %scala
 # MAGIC 
 # MAGIC /*
@@ -268,7 +268,7 @@
 # MAGIC 
 # MAGIC /* chunk the file into groups of 100 */
 # MAGIC // var chunks : Seq[Int] = 1 to zinc15_df_size by 100;
-# MAGIC var chunks : Seq[Int] = 1 to 100 by 100;
+# MAGIC var chunks : Seq[Int] = 1 to zinc15_df_size by 100;
 # MAGIC 
 # MAGIC /* run a sequence for each */
 # MAGIC  chunks.foreach {
@@ -296,11 +296,11 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Examine Ligands for Class Imbalance
+# MAGIC ## リガンドの確認
 
 # COMMAND ----------
 
-# DBTITLE 1,Look at the Molecular Weight Distributions of Ligands
+# DBTITLE 1,リガンドの分子量分布 (Molecular Weight Distributions) の確認
 # MAGIC %sql
 # MAGIC 
 # MAGIC --
@@ -317,26 +317,26 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ### Optimize Table Reads with Delta
+# MAGIC ### Delta Lake テーブルの最適化
 
 # COMMAND ----------
 
-# DBTITLE 1,Get Details on Delta Lake Table
-# MAGIC %sql DESCRIBE EXTENDED ZINC_15_250K;
+# DBTITLE 1, Delta Lake テーブルの詳細の確認
+# MAGIC %sql describe detail ZINC_15_250K;
 
 # COMMAND ----------
 
-# DBTITLE 1,Optimize the Table to Compact Small Files
-# MAGIC %sql OPTIMIZE ZINC_15_250K;
+# DBTITLE 1,テーブルを最適化し、小さいファイルをマージ
+# MAGIC %sql optimize ZINC_15_250K
 
 # COMMAND ----------
 
-# DBTITLE 1,Get File Parquet File Distributions for the Zinc_15_250K Table
-# MAGIC %fs ls dbfs:/user/hive/warehouse/zinc_15_250k
+# DBTITLE 1, Delta Lake テーブルの詳細の確認
+# MAGIC %sql describe detail ZINC_15_250K;
 
 # COMMAND ----------
 
-# DBTITLE 1,Run the Same Query with Optimized Parquet Files for ZINC_15_250K
+# DBTITLE 1,最適化後に同じクエリを実行
 # MAGIC %sql
 # MAGIC 
 # MAGIC --
@@ -351,7 +351,7 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Look at the logP Distribution of Ligands
+# DBTITLE 1,リガンズの分配係数 (logP) の分布の確認
 # MAGIC %sql
 # MAGIC 
 # MAGIC --
@@ -381,7 +381,7 @@
 # COMMAND ----------
 
 # MAGIC %md 
-# MAGIC # Load 6COX Receptor
+# MAGIC # 6COX レセプタのロード
 
 # COMMAND ----------
 
