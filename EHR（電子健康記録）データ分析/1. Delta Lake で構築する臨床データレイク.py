@@ -1,196 +1,263 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ##<img src="https://databricks.com/wp-content/themes/databricks/assets/images/header_logo_2x.png" alt="logo" width="150"/> 
-# MAGIC 
-# MAGIC # EHR Data Analysis
-# MAGIC ## 1. ETL
-# MAGIC 
+# MAGIC # Delta Lake で構築する臨床データレイク
+# MAGIC <img src="https://databricks.com/wp-content/uploads/2020/04/health-blog-delta.png" />
 # MAGIC <ol>
 # MAGIC   <li> **Data**: We use a realistic simulation of patient EHR data using **[synthea](https://github.com/synthetichealth/synthea)**, for ~10,000 patients in Massachusetts </li>
 # MAGIC   <li> **Ingestion and De-identification**: We use **pyspark** to read data from csv files, de-identify patient PII and write to Delta Lake</li>
 # MAGIC   <li> **Database creation**: We then use delta tables to create a database of pateint recprds for subsequent data analysis</li>
 # MAGIC </ol>
-# MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
-# MAGIC <img src="https://amir-hls.s3.us-east-2.amazonaws.com/public/rwe-uap.png" width=700>
-# MAGIC </div>
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 準備
+
+# COMMAND ----------
+
+import re
+
+# ユーザ名の取得と処理
+username_raw = dbutils.notebook.entry_point.getDbutils().notebook().getContext().tags().apply('user')
+username = re.sub('[^A-Za-z0-9]+', '', username_raw).lower()
+
+# データベース名の生成
+database_name = f"ehrdemo_{username}"
+
+# データベースの再作成
+spark.sql(f"drop database if exists {database_name} cascade")
+spark.sql(f"create database {database_name}")
+spark.sql(f"use {database_name}")
+print(f"database_name: {database_name}")
+
+# Delta Lake テーブルのルートパスの生成
+delta_path = f"/tmp/{database_name}"
+
+# Delta Lake テーブルのルートパスの削除
+dbutils.fs.rm(delta_path, True)
+print(f"delta_path: {delta_path}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## ファイルの確認
+
+# COMMAND ----------
+
+# MAGIC %fs ls /databricks-datasets/rwe/ehr/csv/
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## 1. Ingest data into Spark dataframes
-
-# COMMAND ----------
-
-# DBTITLE 1,Import Libraries and list csv files to download
-from pyspark.sql import functions as F, Window
-ehr_path = '/databricks-datasets/rwe/ehr'
-display(dbutils.fs.ls(ehr_path)) ## display list of files
-
-# COMMAND ----------
-
-# DBTITLE 1,Ingest all files into spark dataframes
-# create a python dictionary of dataframes
-ehr_dfs = {}
-for path,name in [(f.path,f.name) for f in dbutils.fs.ls(ehr_path) if f.name !='README.txt']:
-  df_name = name.replace('.csv','')
-  ehr_dfs[df_name] = spark.read.csv(path,header=True,inferSchema=True)
-
-# Display number of records in each table
-out_str="<h2>There are {} tables in this collection with:</h2><br>".format(len(ehr_dfs))
-for k in ehr_dfs:
-  out_str+='{}: <i style="color:Tomato;">{}</i> records <br>'.format(k.upper(),ehr_dfs[k].count())
-
-displayHTML(out_str)
+# MAGIC ## ブロンズテーブルの作成
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
-# MAGIC ## 2. De-identify Patient PII
+# MAGIC ### CSV ファイルの読み取り
 
 # COMMAND ----------
 
-# DBTITLE 1,Define an encryption function
-from pyspark.sql.types import StringType, IntegerType, StructType, StructField
-import hashlib
+# 患者データの CSV ファイルの読み取り
+df_patients_raw = spark.read.csv("/databricks-datasets/rwe/ehr/csv/patients.csv", header=True, inferSchema=True)
 
-def encrypt_value(pii_col):
-  sha_value = hashlib.sha1(pii_col.encode()).hexdigest()
-  return sha_value
-
-encrypt_value_udf = udf(encrypt_value, StringType())
-
-# COMMAND ----------
-
-# DBTITLE 1,Apply encryption to PII columns
-pii_cols=['SSN','DRIVERS','PASSPORT','PREFIX','FIRST','LAST','SUFFIX','MAIDEN','BIRTHPLACE','ADDRESS']
-patients_obfuscated = ehr_dfs['patients']
-
-for c in pii_cols:
-  patients_obfuscated = patients_obfuscated.withColumn(c,F.coalesce(c,F.lit('null'))).withColumn(c,encrypt_value_udf(c))
-display(patients_obfuscated)
+# 診察データの CSV ファイルの読み取り
+df_encounters_raw = spark.read.csv("/databricks-datasets/rwe/ehr/csv/encounters.csv", header=True, inferSchema=True)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
-# MAGIC ## 3. Write tables to Delta Lake
+# MAGIC ### データの確認
 
 # COMMAND ----------
 
-## Specify the path to delta tables on dbfs
-delta_root_path = "dbfs:/tmp/rwe-ehr/delta"
-
-## to ensure fresh start we delete the path if it already exist
-dbutils.fs.rm(delta_root_path, recurse=True)
-
-## Create enounters table with renamed columns
-(
-  ehr_dfs['encounters']
-  .withColumnRenamed('Id','Enc_Id')
-  .withColumnRenamed('START', 'START_TIME')
-  .withColumnRenamed('END', 'END_TIME')
-  .write.format('delta').save(delta_root_path + '/encounters')
-)
-
-## Create providers table with renamed columns
-(
-  ehr_dfs['providers']
-  .withColumnRenamed('NAME','Provider_Name')
-  .withColumnRenamed('Id','PROVIDER')
-  .write.format('delta').save(delta_root_path + '/providers')
-)
-
-## Create organizations table with renamed columns
-(
-  ehr_dfs['organizations']
-  .withColumnRenamed('NAME','Org_Name')
-  .withColumnRenamed('Id','ORGANIZATION')
-  .withColumnRenamed('ADDRESS', 'PROVIDER_ADDRESS')
-  .withColumnRenamed('CITY', 'PROVIDER_CITY')
-  .withColumnRenamed('STATE', 'PROVIDER_STATE')
-  .withColumnRenamed('ZIP', 'PROVIDER_ZIP')
-  .withColumnRenamed('GENDER', 'PROVIDER_GENDER')
-  .write.format('delta').save(delta_root_path + '/organizations')
-)
-
-## Create patients from dataframe with obfuscated PII
-(
-  patients_obfuscated
-  .write.format('delta').save(delta_root_path + '/patients')
-)
+# 患者データの確認
+display(df_patients_raw)
 
 # COMMAND ----------
 
-# DBTITLE 1,create a table containing all patient encounters and save to delta
-patients = spark.read.format("delta").load(delta_root_path + '/patients').withColumnRenamed('Id', 'PATIENT')
-encounters = spark.read.format("delta").load(delta_root_path + '/encounters').withColumnRenamed('PROVIDER', 'ORGANIZATION')
-organizations = spark.read.format("delta").load(delta_root_path + '/organizations')
+# 診察データの確認
+display(df_encounters_raw)
 
-(
-  encounters
-  .join(patients, ['PATIENT'])
-  .join(organizations, ['ORGANIZATION'])
-  .write.format('delta').save(delta_root_path + '/patient_encounters')
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### ブロンズテーブルの作成
+
+# COMMAND ----------
+
+# 患者データのブロンズテーブルの作成
+(df_patients_raw
+ .write
+ .format("delta")
+ .save(f"{delta_path}/patients_raw")
+)
+
+# 診察データのブロンズテーブルの作成
+(df_encounters_raw
+ .write
+ .format("delta")
+ .save(f"{delta_path}/encounters_raw")
 )
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4. Create database and tables
+# MAGIC ## シルバーテーブルの作成
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### ブロンズテーブルからのデータの取得
+
+# COMMAND ----------
+
+# 患者データのブロンズテーブルのデータの読み取り
+df_patients = (spark
+               .read
+               .format("delta")
+               .load(f"{delta_path}/patients_raw"))
+
+# 診察データのブロンズテーブルのデータの読み取り
+df_encounters = (spark
+                 .read
+                 .format("delta")
+                 .load(f"{delta_path}/encounters_raw"))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### データの整形、加工
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### 患者データの整形、加工
+
+# COMMAND ----------
+
+# 患者データから、データ分析に不要となる個人に関する情報を除去。
+df_patients = df_patients.drop("SSN", "DRIVERS", "PASSPORT", "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN", "BIRTHPLACE", "ADDRESS")
+　
+# 結果を表示。
+display(df_patients)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### 診療データの整形、加工
+
+# COMMAND ----------
+
+# 必要となる Python モジュールをインポート。
+from pyspark.sql.functions import col
+
+# REASONDESCRIPTION カラムの値が Null であるレコードを除去。
+df_encounters = df_encounters.filter(col("REASONDESCRIPTION").isNotNull())
+
+# 結果を表示。
+display(df_encounters)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### シルバーテーブルの作成
+
+# COMMAND ----------
+
+# 患者データのシルバーテーブルの作成
+(df_patients
+ .write
+ .format("delta")
+ .save(f"{delta_path}/patients")
+)
+
+# 診察データのシルバーテーブルの作成
+(df_encounters
+ .write
+ .format("delta")
+ .save(f"{delta_path}/encounters")
+)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## ゴールドテーブルの作成
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### シルバーテーブルからのデータの取得
+
+# COMMAND ----------
+
+# 患者データのブロンズテーブルのデータの読み取り
+df_patients = (spark
+               .read
+               .format("delta")
+               .load(f"{delta_path}/patients"))
+
+# 診察データのブロンズテーブルのデータの読み取り
+df_encounters = (spark
+                 .read
+                 .format("delta")
+                 .load(f"{delta_path}/encounters"))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 診療データと患者データの結合
+
+# COMMAND ----------
+
+# 結合キーのカラム名を PATIENT_ID へ統一。
+df_encounters = df_encounters.withColumnRenamed("PATIENT", "PATIENT_ID")
+df_patients = df_patients.withColumnRenamed("Id", "PATIENT_ID")
+
+# 結合を実施。
+df_encounter_patients = df_encounters.join(df_patients, "PATIENT_ID")
+
+# 結果を表示。
+display(df_encounter_patients)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### ゴールドテーブルの作成
+
+# COMMAND ----------
+
+# 診療データと患者データの結合結果をゴールとテーブルとして作成。
+(df_encounter_patients
+ .write
+ .format("delta")
+ .save(f"{delta_path}/encounter_patients")
+)
+
+# Spark SQL で参照できるようにするため、メタデータを作成。
+spark.sql(f"""
+  create table encounter_patients
+  using delta
+  location '{delta_path}/encounter_patients'
+""")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Spark SQL でのゴールドテーブルデータの確認
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- Create Database
-# MAGIC CREATE DATABASE IF NOT EXISTS rwd
-# MAGIC     COMMENT "Database for real world data"
-# MAGIC     LOCATION "dbfs:/tmp/rwe-ehr/databases";
-# MAGIC 
-# MAGIC DROP TABLE IF EXISTS rwd.encounters;
-# MAGIC 
-# MAGIC -- Create encounters table
-# MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS rwd.encounters
-# MAGIC USING DELTA
-# MAGIC LOCATION 'dbfs:/tmp/rwe-ehr/delta/encounters';
-# MAGIC 
-# MAGIC -- Create providers table
-# MAGIC 
-# MAGIC DROP TABLE IF EXISTS rwd.providers;
-# MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS rwd.providers
-# MAGIC USING DELTA
-# MAGIC LOCATION 'dbfs:/tmp/rwe-ehr/delta/providers';
-# MAGIC 
-# MAGIC -- Create organizations table
-# MAGIC 
-# MAGIC DROP TABLE IF EXISTS rwd.organizations;
-# MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS rwd.organizations
-# MAGIC USING DELTA
-# MAGIC LOCATION 'dbfs:/tmp/rwe-ehr/delta/organizations';
-# MAGIC 
-# MAGIC -- Create patients table
-# MAGIC 
-# MAGIC DROP TABLE IF EXISTS rwd.patients;
-# MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS rwd.patients
-# MAGIC USING DELTA
-# MAGIC LOCATION 'dbfs:/tmp/rwe-ehr/delta/patients';
-# MAGIC 
-# MAGIC -- Create patient encounter table
-# MAGIC 
-# MAGIC DROP TABLE IF EXISTS rwd.patient_encounters;
-# MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS rwd.patient_encounters
-# MAGIC USING DELTA
-# MAGIC LOCATION 'dbfs:/tmp/rwe-ehr/delta/patient_encounters';
+# MAGIC select
+# MAGIC   *
+# MAGIC from
+# MAGIC   encounter_patients
 
 # COMMAND ----------
 
-# MAGIC %sql SELECT * FROM rwd.patient_encounters
+display(dbutils.fs.ls(f"{delta_path}/encounter_patients"))
 
 # COMMAND ----------
 
