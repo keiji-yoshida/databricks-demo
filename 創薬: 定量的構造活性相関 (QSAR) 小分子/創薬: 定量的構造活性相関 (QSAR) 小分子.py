@@ -12,7 +12,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Databricks QSAR Reference Architecture
+# MAGIC ## Databricks QSAR リファレンスアーキテクチャ
 
 # COMMAND ----------
 
@@ -24,25 +24,25 @@
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Target Results (6COX with Docked Ligand)
+# MAGIC ## 対象の結果（ドッキングされたリガンドでの 6COX）
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_3.png" width = "33%" /img><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_4.png" width = "33%" /img><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_5.png" width = "33%"/img>
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Setup the environment
+# MAGIC # 環境のセットアップ
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Install In Silico Molecular Docking of Small Ligand to Protein Targets (Autodock Vina)
+# MAGIC ## 小分子リガンドから標的タンパク質へのインシリコ分子ドッキングを行うためのプログラム (Autodock Vina) のインストール
 # MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/autodock_vina.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ### Use Conda in ML Runtime
+# MAGIC ### ML ランタイムでの Conda の使用
 
 # COMMAND ----------
 
