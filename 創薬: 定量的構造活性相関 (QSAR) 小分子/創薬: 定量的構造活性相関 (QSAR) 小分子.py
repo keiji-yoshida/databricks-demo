@@ -7,15 +7,7 @@
 # MAGIC %md
 # MAGIC 
 # MAGIC ## 創薬パイプライン
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Nets_Drug_Development.jpg" alt=default width=50%><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Databricks_Unified_Analytics_Platform.png" alt=default width=50%>
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC 
-# MAGIC ## Target Drug Discovery Pipeline Presented in 2016 in Savannah, Georgia
-# MAGIC 
-# MAGIC <img src="files/shared_uploads/mark.lee@databricks.com/46_2016_Calicivirus_Poster.png" alt="drawing" width="1000"/>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Nets_Drug_Development.jpg" alt=default width=50%><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Databricks_Unified_Analytics_Platform.png" alt=default width=50%>
 
 # COMMAND ----------
 
@@ -26,14 +18,14 @@
 
 # DBTITLE 0,Databricks QSAR Reference Architectures
 # MAGIC %md
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture.png" alt=default width=50%><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture_in_depth.png" alt=default width=50%>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture.png" alt=default width=50%><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_in_depth.png" alt=default width=50%>
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Target Results (6COX with Docked Ligand)
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_4.png" width = "33%" /img><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_3.png" width = "33%" /img><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_3.png" width = "33%"/img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_3.png" width = "33%" /img><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_4.png" width = "33%" /img><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_5.png" width = "33%"/img>
 
 # COMMAND ----------
 
@@ -44,7 +36,7 @@
 
 # MAGIC %md
 # MAGIC ## Install In Silico Molecular Docking of Small Ligand to Protein Targets (Autodock Vina)
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/autodock_vina.png" alt="drawing" width="500"/>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/autodock_vina.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
@@ -67,7 +59,7 @@
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Install In Silico Protein Surface Mapper (Concavity)
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Concavity.png" alt="drawing" width="500"/>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Concavity.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
@@ -126,16 +118,16 @@
 # MAGIC %md 
 # MAGIC 
 # MAGIC # Load Zinc15 Small Molecule Public Repository
-# MAGIC <img src ="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/zinc15_license.png" width="500"/>
+# MAGIC <img src ="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/zinc15_license.png" width="500"/>
 # MAGIC 
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Zinc_3D.png" alt="drawing" width="500"/>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/Zinc_3D.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Architecture Step
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture_ingest.png", width = "100%" /img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_ingest.png", width = "100%" /img>
 
 # COMMAND ----------
 
@@ -395,7 +387,7 @@
 
 # MAGIC %md
 # MAGIC ## Load 6COX PDB From RCSB
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/rcsb_pdb.png" alt="drawing" width="500"/>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/rcsb_pdb.png" alt="drawing" width="500"/>
 
 # COMMAND ----------
 
@@ -482,7 +474,7 @@
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Architecture Step
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture_clean.png", width = 100% /img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_clean.png" width="100%" />
 
 # COMMAND ----------
 
@@ -736,7 +728,7 @@
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Architecture Step
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture_vina.png", width = 100% /img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_vina.png", width="100%" />
 
 # COMMAND ----------
 
@@ -961,11 +953,7 @@
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Visualize a sample docked receptor
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_4.png" width = "33%" /img><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_3.png" width = "33%" /img><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_3.png" width = "33%"/img>
-
-# COMMAND ----------
-
-<img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/6cox_docked_3.png" width = "33%"/img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_3.png" width="33%" /><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_4.png" width="33%" /><img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/6cox_docked_5.png" width="33%" />
 
 # COMMAND ----------
 
@@ -976,7 +964,7 @@
 
 # MAGIC %md
 # MAGIC ## Architecture Step
-# MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/QSAR%20Architecture_mlflow.png" width = "100%" /img>
+# MAGIC <img src="https://raw.githubusercontent.com/keiji-yoshida/databricks-demo/main/%E5%89%B5%E8%96%AC%3A%20%E5%AE%9A%E9%87%8F%E7%9A%84%E6%A7%8B%E9%80%A0%E6%B4%BB%E6%80%A7%E7%9B%B8%E9%96%A2%20(QSAR)%20%E5%B0%8F%E5%88%86%E5%AD%90/imgs/QSAR%20Architecture_mlflow.png" width="100%" />
 
 # COMMAND ----------
 
