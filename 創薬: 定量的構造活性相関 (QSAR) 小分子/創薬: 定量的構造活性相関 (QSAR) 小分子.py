@@ -1,12 +1,12 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Introduction
+# MAGIC # はじめに
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Modern Drug Discovery Pipeline
+# MAGIC ## 創薬パイプライン
 # MAGIC <img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Nets_Drug_Development.jpg" alt=default width=50%><img src="https://raw.githubusercontent.com/bluerider/distributed_qsar/master/Databricks_Unified_Analytics_Platform.png" alt=default width=50%>
 
 # COMMAND ----------
