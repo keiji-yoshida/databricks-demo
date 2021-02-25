@@ -4,6 +4,10 @@
 
 # COMMAND ----------
 
+print(1)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC ## 創薬パイプライン
